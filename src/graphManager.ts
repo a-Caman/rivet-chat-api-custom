@@ -1,7 +1,4 @@
 import * as Rivet from '@ironclad/rivet-node';
-import rivetAnthropicPlugin from 'rivet-plugin-anthropic';
-
-Rivet.globalRivetNodeRegistry.registerPlugin(rivetAnthropicPlugin(Rivet));
 import fs from 'fs/promises';
 import path from 'path';
 import { setupPlugins, logAvailablePluginsInfo } from './pluginConfiguration.js';
@@ -51,13 +48,15 @@ export class GraphManager {
     async *runGraph(messages: Array<{ type: 'user' | 'assistant'; message: string }>) {
         console.time('runGraph');
         let projectContent: string;
-    
+
         // Ensure the DebuggerServer is started
         DebuggerServer.getInstance().startDebuggerServerIfNeeded();
-    
+
         try {
             // Dynamically setup plugins and retrieve their settings
+            console.log('Setting up plugins...');
             const pluginSettings = await setupPlugins(Rivet);
+            console.log('Plugins set up with settings:', pluginSettings);
 
             if (this.modelContent) {
                 // Use direct model content if provided
@@ -69,10 +68,10 @@ export class GraphManager {
                 console.log('runGraph called with model file:', modelFilePath);
                 projectContent = await fs.readFile(modelFilePath, 'utf8');
             }
-    
+
             const project = Rivet.loadProjectFromString(projectContent);
             const graphInput = "input";
-    
+
             const datasetOptions = {
                 save: true,
                 // filePath should only be set if you're working with a file, adjust accordingly
@@ -117,7 +116,7 @@ export class GraphManager {
             const { processor, run } = Rivet.createProcessor(project, options);
             const runPromise = run();
             console.log('Starting to process events');
-    
+
             let lastContent = '';
 
             for await (const event of processor.events()) {
@@ -155,10 +154,9 @@ export class GraphManager {
                     }
                 }
             }
-            
-    
+
             console.log('Finished processing events');
-    
+
             const finalOutputs = await runPromise;
             if (finalOutputs && finalOutputs["output"]) {
                 yield finalOutputs["output"].value;
