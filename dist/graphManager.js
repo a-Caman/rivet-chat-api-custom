@@ -41,7 +41,9 @@ export class GraphManager {
         DebuggerServer.getInstance().startDebuggerServerIfNeeded();
         try {
             // Dynamically setup plugins and retrieve their settings
+            console.log('Setting up plugins...');
             const pluginSettings = await setupPlugins(Rivet);
+            console.log('Plugins set up with settings:', pluginSettings);
             if (this.modelContent) {
                 // Use direct model content if provided
                 projectContent = this.modelContent;
