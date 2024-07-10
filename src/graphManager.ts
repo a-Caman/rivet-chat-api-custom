@@ -1,6 +1,7 @@
 import * as Rivet from '@ironclad/rivet-node';
-import rivetAntrophicPlugin from 'rivet-plugin-antrophic';
-Rivet.globalRivetNodeRegistry.registerPlugin(rivetAntrophicPlugin(Rivet));
+import rivetAnthropicPlugin from 'rivet-plugin-anthropic';
+
+Rivet.globalRivetNodeRegistry.registerPlugin(rivetAnthropicPlugin(Rivet));
 import fs from 'fs/promises';
 import path from 'path';
 import { setupPlugins, logAvailablePluginsInfo } from './pluginConfiguration.js';
